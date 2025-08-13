@@ -146,19 +146,22 @@ col1, col2 = st.columns([2, 1])
 with col1:
     st.header("📝 Number Entry")
     
-    # Input para número
-    col_input, col_add, col_delete = st.columns([2, 1, 1])
-    
-    with col_input:
-        new_number = st.number_input("Enter number (0-36)", min_value=0, max_value=36, value=0, key="number_input")
-    
-    with col_add:
-        if st.button("➕ Add", use_container_width=True):
+    with st.form("number_form", clear_on_submit=True):
+        col_input, col_add = st.columns([3, 1])
+        
+        with col_input:
+            new_number = st.number_input("Enter number (0-36)", min_value=0, max_value=36, value=0, key="number_input")
+        
+        with col_add:
+            submitted = st.form_submit_button("➕ Add", use_container_width=True)
+        
+        if submitted:
             st.session_state.numbers.append(new_number)
             update_counters(new_number)
             st.rerun()
     
-    with col_delete:
+    col_delete_container = st.columns([1, 2])
+    with col_delete_container[0]:
         if st.button("🗑️ Delete Last", use_container_width=True) and st.session_state.numbers:
             st.session_state.numbers.pop()
             # Recalcular todos los contadores
