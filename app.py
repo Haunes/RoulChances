@@ -109,12 +109,24 @@ def update_counters(number):
     
     # Actualizar contador de docenas
     current_dozen = get_dozen(number)
-    if current_dozen in st.session_state.dozen_types:
-        st.session_state.dozen_count += 1
-        st.session_state.dozen_types.add(current_dozen)
-    else:
+    
+    # Si es el primer número o no hay docenas registradas
+    if not st.session_state.dozen_types:
         st.session_state.dozen_types = {current_dozen}
         st.session_state.dozen_count = 1
+    # Si la docena actual ya está en el set (continúa el patrón)
+    elif current_dozen in st.session_state.dozen_types:
+        st.session_state.dozen_count += 1
+    # Si es una nueva docena
+    else:
+        # Si ya tenemos 2 docenas y llega una tercera, resetear
+        if len(st.session_state.dozen_types) >= 2:
+            st.session_state.dozen_types = {current_dozen}
+            st.session_state.dozen_count = 1
+        # Si tenemos 1 docena y llega una segunda, agregarla
+        else:
+            st.session_state.dozen_types.add(current_dozen)
+            st.session_state.dozen_count += 1
     
     # Actualizar contador de diagonales
     current_diagonal = get_diagonal(number)
